@@ -1,0 +1,103 @@
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'jacoco'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'org.springframework.boot'
+
+    sourceCompatibility = "${javaVersion}"
+    targetCompatibility = "${javaVersion}"
+
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-webflux'
+        implementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'io.projectreactor:reactor-test'
+        implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+        compileOnly "org.projectlombok:lombok:${lombokVersion}"
+        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    }
+
+    jacoco {
+        toolVersion = "${jacocoVersion}"
+    }
+
+    bootJar {
+        enabled = false
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    jacocoTestReport {
+        dependsOn test
+        reports {
+            xml.required = true
+            xml.destination layout.buildDirectory.file("reports/jacoco.xml").get().asFile
+            csv.required = false
+            html.destination layout.buildDirectory.file("reports/jacocoHtml").get().asFile
+        }
+    }
+
+    tasks.withType(JavaCompile).tap {
+        configureEach {
+            options.encoding = 'UTF-8'
+        }
+    }
+}
+
+tasks.register('jacocoMergedReport', JacocoReport) {
+    dependsOn subprojects.jacocoTestReport
+    finalizedBy jacocoTestCoverageVerification
+    additionalSourceDirs.setFrom files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories.setFrom files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories.setFrom(files(subprojects.sourceSets.main.output).collect {
+        fileTree(dir: it,
+                exclude: [
+                        "**/GrouplifeApplication.class",
+                        "**/openapi/**",
+                        "**/MailSendGridController.class",
+                        "**/PrintIssueController.class",
+                        "**/infrastructure/configuration/**"
+                ]
+        )
+    })
+    executionData.setFrom project.fileTree(dir: '.', include: '**/build/jacoco/test.exec')
+    reports {
+        xml.required = true
+        csv.required = false
+        html.required = true
+    }
+}
+
+jacocoTestCoverageVerification {
+    dependsOn jacocoMergedReport
+    additionalSourceDirs.setFrom files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories.setFrom files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories.setFrom files(subprojects.sourceSets.main.output)
+    executionData.setFrom project.fileTree(dir: '.', include: '**/build/jacoco/test.exec')
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "**/GrouplifeApplication.class",
+                    "**/openapi/**",
+                    "**/MailSendGridController.class",
+                    "**/PrintIssueController.class",
+                    "**/infrastructure/configuration/**"
+            ])
+        }))
+    }
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.80
+            }
+        }
+    }
+}

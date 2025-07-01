@@ -1,0 +1,4 @@
+springdoc:
+  swagger-ui:
+    enabled: true
+    url: /open-api.yaml

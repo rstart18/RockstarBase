@@ -1,0 +1,41 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: $APP_NAME
+  namespace: $NAME_SPACE
+  labels:
+    app: $APP_NAME
+    app.kubernetes.io/name: $APP_NAME
+    app.kubernetes.io/part-of: $APP_NAME_LABEL
+spec:
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: '$APP_NAME:latest'
+  resources: {}
+  successfulBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 5
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: deployment/Dockerfile
+      env:
+        - name: MAVEN_MIRROR_URL
+          value: >-
+            http://nexusrepo-sonatype-nexus-service.cicd.svc.cluster.local:8081/repository/maven-internal-and-public-group/
+  postCommit: {}
+  source:
+    type: Git
+    git:
+      uri: >-
+        $GIT_URI
+      ref: $GIT_BRANCH
+    contextDir: /
+    sourceSecret:
+      name: $CREDENTIALS_SECRET_NAME
+  triggers:
+    - type: ImageChange
+      imageChange: {}
+    - type: ConfigChange
+  runPolicy: Serial

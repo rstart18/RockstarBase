@@ -1,0 +1,58 @@
+spring:
+  webflux:
+    base-path: /api-platform-grouplife/v1
+  data:
+    mongodb:
+      uri: mongodb://localhost:28017/test
+  security:
+    user:
+      name: user
+      password: pass
+api:
+  catalog:
+    url: http://localhost:8001
+  folio:
+    url: http://localhost:8002
+    daystorecover: 15
+  commission:
+    url: http://localhost:8003
+  pricing:
+    version: v1
+    url: http://localhost:8004
+  mui-jasper:
+    url: http://localhost:8005
+  storage:
+    url: http://localhost:8006
+  validation:
+    url: http://localhost:8007
+  catalogue:
+    url: http://localhost:8008
+  issue:
+    url: http://localhost:8008
+    direct: http://localhost:8108
+    user: user
+    pass: pass
+  payment:
+    direct: http://localhost:8109
+    user: user
+    pass: pass
+  print:
+    url: http://localhost:8010
+  mailsendgrid:
+    direct: http://localhost:8011
+    user: user
+    pass: pass
+    from: test@test.com
+    apikey: SG.sma-UoGfT5aZ
+    template-notification: d-5452ba270
+msal:
+  xApiKey: abc1234
+logging:
+  level:
+    root: DEBUG
+agentPotal:
+  url: https://portalagentes-qa.segurossura.com.mx
+  jwt:
+    secretKey: 1234567890qwerty
+  recover:
+    secretKey: 1234567890qwerty

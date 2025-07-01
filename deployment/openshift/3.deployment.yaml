@@ -1,0 +1,195 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  annotations:
+    image.openshift.io/triggers: >-
+      [{"from":{"kind":"ImageStreamTag","name":"$APP_NAME:latest","namespace":"$NAME_SPACE"},"fieldPath":"spec.template.spec.containers[?(@.name==\"$APP_NAME\")].image","pause":"false"}]
+  name: $APP_NAME
+  namespace: $NAME_SPACE
+  labels:
+    app: $APP_NAME
+    app.kubernetes.io/part-of: $APP_NAME_LABEL
+    app.openshift.io/runtime: java
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: $APP_NAME
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: $APP_NAME
+        deploymentconfig: $APP_NAME
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: $APP_NAME
+          image: >-
+            image-registry.openshift-image-registry.svc:5000/$NAME_SPACE/$APP_NAME:latest
+          env:
+            - name: HTTP_PORT
+              value: '$HTTP_PORT'
+            - name: TZ
+              value: $TZ
+            - name: CONTEXT_PATH
+              value: $CONTEXT_PATH
+            - name: JAVA_OPTS
+              value: '$JAVA_OPTS'
+            - name: BASIC_AUTH_USER
+              valueFrom:
+                secretKeyRef:
+                  name: $APP_SECRET_BASIC_AUTH
+                  key: username
+            - name: BASIC_AUTH_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: $APP_SECRET_BASIC_AUTH
+                  key: password
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: $APP_SECRET_MONGODB_URI
+                  key: vida_grupo
+            - name: MSAL_APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: $APP_SECRET_VIDAGRUPO
+                  key: x_api_key
+            - name: API_CATALOG_URL
+              value: $API_CATALOG_URL
+            - name: API_FOLIO_URL
+              value: $API_FOLIO_URL
+            - name: API_COMMISSION_URL
+              value: $API_COMMISSION_URL
+            - name: AGENTPORTAL_JWT_SECRETKEY
+              valueFrom:
+                secretKeyRef:
+                  name: $APP_SECRET_VIDAGRUPO
+                  key: secret_agente
+            - name: AGENTPORTAL_RECOVER_SECRETKEY
+              valueFrom:
+                secretKeyRef:
+                  name: $APP_SECRET_VIDAGRUPO
+                  key: secret_recover
+            - name: API_PRICING_VERSION
+              value: $API_PRICING_VERSION
+            - name: API_PRICING_URL
+              value: $API_PRICING_URL
+            - name: API_MUI_JASPER_URL
+              value: $API_MUI_JASPER_URL
+            - name: API_STORAGE_URL
+              value: $API_STORAGE_URL
+            - name: API_VALIDATION_URL
+              value: $API_VALIDATION_URL
+            - name: API_CATALOGUE_URL
+              value: $API_CATALOGUE_URL
+            - name: API_ISSUE_URL
+              value: $API_ISSUE_URL
+            - name: API_PAYMENT_DIRECT
+              value: $API_PAYMENT_DIRECT
+            - name: API_PAYMENT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: $APP_SECRET_VIDAGRUPO
+                  key: api_payment_user
+            - name: API_PAYMENT_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: $APP_SECRET_VIDAGRUPO
+                  key: api_payment_pass
+            - name: API_PRINT_URL
+              value: $API_PRINT_URL
+            - name: API_ISSUE_DIRECT
+              value: $API_ISSUE_DIRECT
+            - name: API_ISSUE_USER
+              valueFrom:
+                secretKeyRef:
+                  name: $APP_SECRET_VIDAGRUPO
+                  key: api_issue_user
+            - name: API_ISSUE_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: $APP_SECRET_VIDAGRUPO
+                  key: api_issue_pass
+            - name: API_MAILSENDGRID_DIRECT
+              value: $API_MAILSENDGRID_DIRECT
+            - name: API_MAILSENDGRID_USER
+              valueFrom:
+                secretKeyRef:
+                  name: $APP_SECRET_VIDAGRUPO
+                  key: api_mailsendgrid_user
+            - name: API_MAILSENDGRID_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: $APP_SECRET_VIDAGRUPO
+                  key: api_mailsendgrid_pass
+            - name: API_MAILSENDGRID_FROM
+              value: $API_MAILSENDGRID_FROM
+            - name: API_MAILSENDGRID_APIKEY
+              valueFrom:
+                secretKeyRef:
+                  name: $APP_SECRET_VIDAGRUPO
+                  key: api_mailsendgrid_apikey
+            - name: API_MAILSENDGRID_TEMPLATE_NOTIFICATION
+              value: $API_MAILSENDGRID_TEMPLATE_NOTIFICATION
+            - name: TASK_CRON
+              value: $TASK_CRON
+            - name: TASK_CRON_MAIL
+              value: $TASK_CRON_MAIL
+            - name: TASK_CRON_ENABLE
+              value: '$TASK_CRON_ENABLE'
+            - name: AGENTPORTAL_URL
+              value: $AGENTPORTAL_URL
+            - name: API_MAIL_POLICY_URL
+              value: $API_MAIL_POLICY_URL
+            - name: DAYS_TO_RECOVER
+              value: '$DAYS_TO_RECOVER'
+          resources:
+            limits:
+              memory: 1024Mi
+            requests:
+              memory: 1024Mi
+          livenessProbe:
+            httpGet:
+              path: $CONTEXT_PATH/status
+              port: $HTTP_PORT
+              scheme: HTTP
+              httpHeaders:
+                - name: Authorization
+                  value: Basic $BASIC_AUTH_B64
+            timeoutSeconds: 10
+            periodSeconds: 60
+            successThreshold: 1
+            failureThreshold: 3
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          imagePullPolicy: Always
+      #          securityContext:
+      #            allowPrivilegeEscalation: false
+      #            runAsUser: 10000
+      #            runAsNonRoot: true
+      #            capabilities:
+      #              drop:
+      #                - NET_RAW
+      #                - SYS_ADMIN
+      #            seccompProfile:
+      #              type: RuntimeDefault
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: { }
+      schedulerName: default-scheduler
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  revisionHistoryLimit: 5
+  progressDeadlineSeconds: 600
+status:
+  observedGeneration: 47
+  replicas: 1
+  updatedReplicas: 1
+  readyReplicas: 1
+  availableReplicas: 1

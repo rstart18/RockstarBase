@@ -1,1 +1,28 @@
-rootProject.name = 'RockstarBase'
+rootProject.name = 'grouplife'
+
+dependencyResolutionManagement {
+    versionCatalogs {
+        create("libs") {
+            version('pluginOpenapiGenerator', '7.4.0')
+            version('springCloudCircuitBreaker', '3.2.0')
+            version('resilience4j', '2.2.0')
+            version('mapstruct', '1.6.0')
+            library('mapstructCore', 'org.mapstruct', 'mapstruct').versionRef('mapstruct')
+            library('mapstructLombok', 'org.projectlombok:lombok-mapstruct-binding:0.2.0')
+            library('mapstructProcessor', 'org.mapstruct', 'mapstruct-processor').versionRef('mapstruct')
+            library('springDoc', 'org.springdoc:springdoc-openapi-starter-webflux-ui:2.6.0')
+            library('openapiGenerator', 'org.openapitools', 'openapi-generator-gradle-plugin').versionRef('pluginOpenapiGenerator')
+            plugin('openapiGenerator', 'org.openapi.generator').versionRef('pluginOpenapiGenerator')
+            library('resilience4jReactor', 'io.github.resilience4j', 'resilience4j-reactor').versionRef('resilience4j')
+            library('springCloudCircuitBreakerReactorResilience4j', 'org.springframework.cloud', 'spring-cloud-starter-circuitbreaker-reactor-resilience4j').versionRef('springCloudCircuitBreaker')
+        }
+    }
+}
+
+include 'app-service'
+include 'api-first'
+include 'domain'
+include 'application'
+include 'infrastructure'
+include 'test-integration'
+

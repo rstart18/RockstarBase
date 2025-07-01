@@ -1,0 +1,19 @@
+dependencies {
+    implementation project(':app-service')
+    implementation project(':domain')
+    implementation project(':application')
+    implementation project(':api-first')
+    implementation project(':infrastructure')
+    implementation libs.mapstructCore
+    implementation libs.mapstructLombok
+    annotationProcessor libs.mapstructProcessor
+    implementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.17.0'
+    implementation libs.resilience4jReactor
+    implementation libs.springCloudCircuitBreakerReactorResilience4j
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'com.auth0:java-jwt:4.4.0'
+}
