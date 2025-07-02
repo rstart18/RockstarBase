@@ -59,3 +59,4 @@ gradle
 # run on port HTTP_PORT
 mediante el IDE utiliza correr el aplicativo como SpringBoot
 ```
+\nEste proyecto usa API First y SonarQube para analisis de calidad.\nLa integracion con Snyk se realiza mediante la tuberia definida en deployment/sonarqube-java-gradle.yaml.\nActualmente no se incluye implementacion de base de datos, por lo que se removieron repositorios de persistencia y pruebas de integracion.\n
