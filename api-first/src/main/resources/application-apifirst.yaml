@@ -1,6 +1,0 @@
-springdoc:
-  swagger-ui:
-    url: /open-api.yaml
-openapi:
-  aPIDocumentation:
-    base-path: /backpmo
