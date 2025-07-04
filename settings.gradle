@@ -1,0 +1,26 @@
+dependencyResolutionManagement {
+    versionCatalogs {
+        libs {
+            version('pluginOpenapiGenerator', '7.4.0')
+            version('mapstruct', '1.5.5.Final')
+            library('openapiGenerator', 'org.openapitools', 'openapi-generator-gradle-plugin').versionRef('pluginOpenapiGenerator')
+            library('springDoc', 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0')
+            library('mapstructCore', 'org.mapstruct', 'mapstruct').versionRef('mapstruct')
+            library('mapstructLombok', 'org.projectlombok:lombok-mapstruct-binding:0.2.0')
+            library('jpa', 'org.springframework.boot:spring-boot-starter-data-jpa:3.2.3')
+            library('mariadb', 'org.mariadb.jdbc:mariadb-java-client:3.0.6')
+            library('h2Database', 'com.h2database:h2:2.2.224')
+            library('mapstructProcessor', 'org.mapstruct', 'mapstruct-processor').versionRef('mapstruct')
+            library('auth0JavaJwt', 'com.auth0:java-jwt:4.4.0')
+            plugin('openapiGenerator', 'org.openapi.generator').versionRef('pluginOpenapiGenerator')
+        }
+    }
+}
+
+include 'app-service'
+include 'api-first'
+
+include 'application'
+include 'domain'
+include 'infrastructure'
+include 'test-integration'
