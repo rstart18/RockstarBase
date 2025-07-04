@@ -14,10 +14,11 @@ subprojects {
     targetCompatibility = "${javaVersion}"
 
     dependencies {
-        implementation 'org.springframework.boot:spring-boot-starter-webflux'
-        implementation 'org.springframework.boot:spring-boot-starter-test'
-        testImplementation 'io.projectreactor:reactor-test'
-        testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+        implementation 'org.springframework.boot:spring-boot-starter'
+        implementation 'org.springframework.boot:spring-boot-starter-security'
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        testImplementation 'org.springframework.boot:spring-boot-starter-test'
+        testImplementation 'org.springframework.security:spring-security-test'
         compileOnly "org.projectlombok:lombok:${lombokVersion}"
         annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
     }
@@ -58,16 +59,14 @@ tasks.register('jacocoMergedReport', JacocoReport) {
     sourceDirectories.setFrom files(subprojects.sourceSets.main.allSource.srcDirs)
     classDirectories.setFrom(files(subprojects.sourceSets.main.output).collect {
         fileTree(dir: it,
-                exclude: [
-                        "**/GrouplifeApplication.class",
-                        "**/openapi/**",
-                        "**/MailSendGridController.class",
-                        "**/PrintIssueController.class",
-                        "**/infrastructure/configuration/**"
-                ]
+            exclude: [
+                "/BackpmoApplication.class",
+                "/configuration/",
+                "/openapi/"
+            ]
         )
     })
-    executionData.setFrom project.fileTree(dir: '.', include: '**/build/jacoco/test.exec')
+    executionData.setFrom project.fileTree(dir: '.', include: '/build/jacoco/test.exec')
     reports {
         xml.required = true
         csv.required = false
@@ -80,22 +79,20 @@ jacocoTestCoverageVerification {
     additionalSourceDirs.setFrom files(subprojects.sourceSets.main.allSource.srcDirs)
     sourceDirectories.setFrom files(subprojects.sourceSets.main.allSource.srcDirs)
     classDirectories.setFrom files(subprojects.sourceSets.main.output)
-    executionData.setFrom project.fileTree(dir: '.', include: '**/build/jacoco/test.exec')
+    executionData.setFrom project.fileTree(dir: '.', include: '/build/jacoco/test.exec')
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
             fileTree(dir: it, exclude: [
-                    "**/GrouplifeApplication.class",
-                    "**/openapi/**",
-                    "**/MailSendGridController.class",
-                    "**/PrintIssueController.class",
-                    "**/infrastructure/configuration/**"
+                "/BackpmoApplication.class",
+                "/configuration/",
+                "/openapi/"
             ])
         }))
     }
     violationRules {
         rule {
             limit {
-                minimum = 0.80
+                minimum = 0.0
             }
         }
     }

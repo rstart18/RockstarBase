@@ -1,0 +1,118 @@
+openapi: 3.0.3
+info:
+  title: Project Management API
+  description: Simple API to manage projects
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /projects:
+    get:
+      summary: List all projects
+      operationId: getProjects
+      tags:
+        - Projects
+      responses:
+        '200':
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+
+    post:
+      summary: Create a new project
+      operationId: createProject
+      tags:
+        - Projects
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewProject'
+      responses:
+        '201':
+          description: Project created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+
+  /projects/{projectId}:
+    get:
+      summary: Get project by ID
+      operationId: getProjectById
+      tags:
+        - Projects
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            type: integer
+          required: true
+          description: ID of the project
+      responses:
+        '200':
+          description: Project details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        '404':
+          description: Project not found
+
+components:
+  schemas:
+    Project:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: My Project
+        description:
+          type: string
+          example: This is a sample project
+        startDate:
+          type: string
+          format: date
+          example: 2024-01-01
+        endDate:
+          type: string
+          format: date
+          example: 2024-12-31
+        status:
+          type: string
+          enum: [PLANNED, IN_PROGRESS, COMPLETED]
+          example: PLANNED
+      required:
+        - id
+        - name
+        - status
+
+    NewProject:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        status:
+          type: string
+          enum: [PLANNED, IN_PROGRESS, COMPLETED]
+      required:
+        - name
+        - status
