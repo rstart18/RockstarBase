@@ -1,4 +1,4 @@
-package co.com.nelumbo.backpmo.controller;
+package co.com.nelumbo.backpmo.infrastructure.controller;
 
 import co.com.nelumbo.backpmo.apifirst.openapi.api.ProjectsApi;
 import co.com.nelumbo.backpmo.apifirst.openapi.model.NewProjectDto;
