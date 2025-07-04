@@ -1,4 +1,8 @@
 dependencies {
+    implementation project(':api-first')
+    implementation project(':application')
+    implementation project(':domain')
+    implementation project(':infrastructure')
 }
 
 tasks.register('explodedJar', Copy) {
