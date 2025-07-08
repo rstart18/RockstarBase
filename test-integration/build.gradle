@@ -12,8 +12,10 @@ repositories {
 dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation project(':application')
+    testImplementation project(':domain')
+    testImplementation 'org.mockito:mockito-core:5.11.0'
 }
 
 test {
-    useJUnitPlatform()
-}
+    useJUnitPlatform()}
