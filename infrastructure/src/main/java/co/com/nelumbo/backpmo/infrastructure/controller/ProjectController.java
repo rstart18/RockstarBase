@@ -6,6 +6,7 @@ import co.com.nelumbo.backpmo.apifirst.openapi.model.ProjectDto;
 import co.com.nelumbo.backpmo.application.service.ProjectService;
 import co.com.nelumbo.backpmo.domain.model.Project;
 import co.com.nelumbo.backpmo.domain.model.Status;
+import co.com.nelumbo.backpmo.infrastructure.exception.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
@@ -31,9 +32,9 @@ public class ProjectController implements ProjectsApi {
 
     @Override
     public ResponseEntity<ProjectDto> getProjectById(Integer projectId) {
-        return service.findById(projectId)
-                .map(p -> ResponseEntity.ok(toDto(p)))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        Project project = service.findById(projectId)
+                .orElseThrow(() -> new NotFoundException("Project not found with id " + projectId));
+        return ResponseEntity.ok(toDto(project));
     }
 
     @Override
